@@ -1,0 +1,6 @@
+string promp_name
+#string path_to_training_data
+------------------
+#uint32 step
+#uint32[] traj_data
+std_msgs/UInt32MultiArray traj_data

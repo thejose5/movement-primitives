@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7cdb9336-6c9e-462a-8c55-b13a83a9029d" name="Default Changelist" comment="" />
+    <list default="true" id="7cdb9336-6c9e-462a-8c55-b13a83a9029d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/promp_train_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../package.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../package.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/promp_record.py" beforeDir="false" afterPath="$PROJECT_DIR$/promp_record.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/promp_srcode.py" beforeDir="false" afterPath="$PROJECT_DIR$/inter_promp_train.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
@@ -19,7 +33,28 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.inter_promp_train">
+    <configuration name="inter_promp_train" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ProMP" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/inter_promp_train.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="promp_record" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ProMP" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -41,9 +76,32 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="promp_srcode" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ProMP" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="/media/thejus/Data/Motion Planning Project/source_code" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="/media/thejus/Data/Motion Planning Project/source_code/promp_srcode.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.inter_promp_train" />
         <item itemvalue="Python.promp_record" />
+        <item itemvalue="Python.promp_srcode" />
       </list>
     </recent_temporary>
   </component>
@@ -59,21 +117,57 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1508" height="218" key="GridCell.Tab.0.bottom" timestamp="1602276009629">
+    <state width="1508" height="218" key="GridCell.Tab.0.bottom" timestamp="1602768894167">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="1508" height="218" key="GridCell.Tab.0.bottom/67.27.1533.872@67.27.1533.872" timestamp="1602276009629" />
-    <state width="1508" height="218" key="GridCell.Tab.0.center" timestamp="1602276009628">
+    <state width="1508" height="218" key="GridCell.Tab.0.bottom/67.27.1533.872@67.27.1533.872" timestamp="1602768894167" />
+    <state width="1508" height="218" key="GridCell.Tab.0.center" timestamp="1602768894166">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="1508" height="218" key="GridCell.Tab.0.center/67.27.1533.872@67.27.1533.872" timestamp="1602276009628" />
-    <state width="1508" height="218" key="GridCell.Tab.0.left" timestamp="1602276009627">
+    <state width="1508" height="218" key="GridCell.Tab.0.center/67.27.1533.872@67.27.1533.872" timestamp="1602768894166" />
+    <state width="1508" height="218" key="GridCell.Tab.0.left" timestamp="1602768894166">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="1508" height="218" key="GridCell.Tab.0.left/67.27.1533.872@67.27.1533.872" timestamp="1602276009627" />
-    <state width="1508" height="218" key="GridCell.Tab.0.right" timestamp="1602276009628">
+    <state width="1508" height="218" key="GridCell.Tab.0.left/67.27.1533.872@67.27.1533.872" timestamp="1602768894166" />
+    <state width="1508" height="218" key="GridCell.Tab.0.right" timestamp="1602768894167">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="1508" height="218" key="GridCell.Tab.0.right/67.27.1533.872@67.27.1533.872" timestamp="1602276009628" />
+    <state width="1508" height="218" key="GridCell.Tab.0.right/67.27.1533.872@67.27.1533.872" timestamp="1602768894167" />
+    <state width="1508" height="270" key="GridCell.Tab.1.bottom" timestamp="1602768894152">
+      <screen x="67" y="27" width="1533" height="872" />
+    </state>
+    <state width="1508" height="270" key="GridCell.Tab.1.bottom/67.27.1533.872@67.27.1533.872" timestamp="1602768894152" />
+    <state width="1508" height="270" key="GridCell.Tab.1.center" timestamp="1602768894151">
+      <screen x="67" y="27" width="1533" height="872" />
+    </state>
+    <state width="1508" height="270" key="GridCell.Tab.1.center/67.27.1533.872@67.27.1533.872" timestamp="1602768894151" />
+    <state width="1508" height="270" key="GridCell.Tab.1.left" timestamp="1602768894149">
+      <screen x="67" y="27" width="1533" height="872" />
+    </state>
+    <state width="1508" height="270" key="GridCell.Tab.1.left/67.27.1533.872@67.27.1533.872" timestamp="1602768894149" />
+    <state width="1508" height="270" key="GridCell.Tab.1.right" timestamp="1602768894151">
+      <screen x="67" y="27" width="1533" height="872" />
+    </state>
+    <state width="1508" height="270" key="GridCell.Tab.1.right/67.27.1533.872@67.27.1533.872" timestamp="1602768894151" />
+    <state x="496" y="206" width="672" height="678" key="search.everywhere.popup" timestamp="1602549922424">
+      <screen x="67" y="27" width="1533" height="872" />
+    </state>
+    <state x="496" y="206" width="672" height="678" key="search.everywhere.popup/67.27.1533.872@67.27.1533.872" timestamp="1602549922424" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file:///media/thejus/Data/Motion Planning Project/source_code/promp_srcode.py</url>
+          <line>401</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/inter_promp_train.py</url>
+          <line>408</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

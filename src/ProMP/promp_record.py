@@ -3,6 +3,7 @@ import pygame
 import time
 import csv
 import random
+import os
 
 
 WIDTH = 2000
@@ -20,11 +21,12 @@ GRIPPER_CLOSED_LINE_COLOR = RED
 GRIPPER_OPEN_LINE_COLOR = BLACK
 LINE_COLOR = BLACK
 REC_TRAJECTORY = []
-SAVE_LOCATION = '/home/thejus/catkin_ws/src/movement_primitives/training_data/ProMP'
+SAVE_LOCATION = '/home/thejus/catkin_ws/src/movement_primitives/training_data/ProMP/'
 SAVE_FREQ = 3 #The mouse position will be saved after every SAVE_FREQ iterations of the while loop
 GRIPPER_STATUS = 0 #0 = Open, 1 = Closed
 LEFT_POINT_BOUNDS = [[300,700],[875,1200]] #x1,x2; y1,y2
 RIGHT_POINT_BOUNDS = [[1300,1700],[875,1200]]
+POINTS = []
 # status_surface = pygame.Surface()
 
 class Button:
@@ -65,7 +67,7 @@ def startRecording(refresh_button, stop_button, game_display):
         # print(pygame.mouse.get_pos())
         pygame.draw.circle(game_display, LINE_COLOR, pygame.mouse.get_pos(), 5)
         if i%SAVE_FREQ == 1:
-            REC_TRAJECTORY.append(pygame.mouse.get_pos()+(GRIPPER_STATUS,))
+            REC_TRAJECTORY.append(POINTS[0]+POINTS[1]+pygame.mouse.get_pos()+(GRIPPER_STATUS,))
         i+=1
         pygame.display.update()
         for event in pygame.event.get():
@@ -114,10 +116,18 @@ def createPoints(npoints, game_display):
     positions = generatePointPos(npoints)
     for i in range(npoints):
         pygame.draw.circle(game_display,COLORS[i],positions[i],10)
+        POINTS.append(positions[i])
     updateStatus('Ready to Record', game_display)
 
 def saveTrajectory(game_display):
-    with open(SAVE_LOCATION+time.ctime(),'w') as f:
+    # Finding the index of last file saved
+    listdir = os.listdir(SAVE_LOCATION)
+    listdir = list(map(int, listdir))
+    listdir.sort()
+    # print(listdir)
+    ind_last_file = 0 if len(listdir)==0 else int(listdir[-1])
+    # print(ind_last_file)
+    with open(SAVE_LOCATION+str(ind_last_file+1),'w') as f:
         write = csv.writer(f)
         write.writerows(REC_TRAJECTORY)
     updateStatus('Trajectory Saved.. Refreshing', game_display)
@@ -147,9 +157,10 @@ def startLoop(game_display, refresh_button, start_button, stop_button, save_butt
                         saveTrajectory(game_display)
 
 def initializeDisplay():
-    global REC_TRAJECTORY, GRIPPER_STATUS
+    global REC_TRAJECTORY, GRIPPER_STATUS, LINE_COLOR
     REC_TRAJECTORY = []
     GRIPPER_STATUS = 0
+    LINE_COLOR = BLACK
 
     pygame.init()
     game_display = pygame.display.set_mode((WIDTH,HEIGHT))
