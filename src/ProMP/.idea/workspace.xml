@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7cdb9336-6c9e-462a-8c55-b13a83a9029d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/promp_train_server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../package.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../package.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../KMP/kmp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/promp_record.py" beforeDir="false" afterPath="$PROJECT_DIR$/promp_record.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/promp_srcode.py" beforeDir="false" afterPath="$PROJECT_DIR$/inter_promp_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inter_promp_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/inter_promp_train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,8 +29,9 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$USER_HOME$/github repos cloned/TSCL-master/addition" />
   </component>
-  <component name="RunManager" selected="Python.inter_promp_train">
+  <component name="RunManager" selected="Python.main">
     <configuration name="inter_promp_train" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ProMP" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -47,6 +45,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/inter_promp_train.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ProMP" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/PycharmProjects/mousedata_test" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/PycharmProjects/mousedata_test/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -99,6 +118,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.main" />
         <item itemvalue="Python.inter_promp_train" />
         <item itemvalue="Python.promp_record" />
         <item itemvalue="Python.promp_srcode" />
@@ -117,22 +137,26 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1508" height="218" key="GridCell.Tab.0.bottom" timestamp="1602768894167">
+    <state x="618" y="199" width="426" height="494" key="FileChooserDialogImpl" timestamp="1605134709017">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="1508" height="218" key="GridCell.Tab.0.bottom/67.27.1533.872@67.27.1533.872" timestamp="1602768894167" />
-    <state width="1508" height="218" key="GridCell.Tab.0.center" timestamp="1602768894166">
+    <state x="618" y="199" width="426" height="494" key="FileChooserDialogImpl/67.27.1533.872@67.27.1533.872" timestamp="1605134709017" />
+    <state width="729" height="217" key="GridCell.Tab.0.bottom" timestamp="1605058923981">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="1508" height="218" key="GridCell.Tab.0.center/67.27.1533.872@67.27.1533.872" timestamp="1602768894166" />
-    <state width="1508" height="218" key="GridCell.Tab.0.left" timestamp="1602768894166">
+    <state width="729" height="217" key="GridCell.Tab.0.bottom/67.27.1533.872@67.27.1533.872" timestamp="1605058923981" />
+    <state width="729" height="217" key="GridCell.Tab.0.center" timestamp="1605058923981">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="1508" height="218" key="GridCell.Tab.0.left/67.27.1533.872@67.27.1533.872" timestamp="1602768894166" />
-    <state width="1508" height="218" key="GridCell.Tab.0.right" timestamp="1602768894167">
+    <state width="729" height="217" key="GridCell.Tab.0.center/67.27.1533.872@67.27.1533.872" timestamp="1605058923981" />
+    <state width="729" height="217" key="GridCell.Tab.0.left" timestamp="1605058923980">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="1508" height="218" key="GridCell.Tab.0.right/67.27.1533.872@67.27.1533.872" timestamp="1602768894167" />
+    <state width="729" height="217" key="GridCell.Tab.0.left/67.27.1533.872@67.27.1533.872" timestamp="1605058923980" />
+    <state width="729" height="217" key="GridCell.Tab.0.right" timestamp="1605058923981">
+      <screen x="67" y="27" width="1533" height="872" />
+    </state>
+    <state width="729" height="217" key="GridCell.Tab.0.right/67.27.1533.872@67.27.1533.872" timestamp="1605058923981" />
     <state width="1508" height="270" key="GridCell.Tab.1.bottom" timestamp="1602768894152">
       <screen x="67" y="27" width="1533" height="872" />
     </state>

@@ -14,7 +14,7 @@ class ProMP:
         self.human_dofs = hum_dofs
         self.robot_dofs = robot_dofs
         self.nBasis = 30 # No. of basis functions per time step
-        self.noise_stdev = 0.009
+        self.noise_stdev = 0.0009
         self.dt = dt
 
         # data is a list, the ith element of which represents an Nx4 array containing the data of the ith demo
@@ -410,7 +410,7 @@ def main(args):
     plt.figure(1)
     plt.plot(traj[:,4],traj[:,5])
     plt.plot(test_point[0],test_point[1],'ro')
-    plt.plot(test_point[2], test_point[3], 'go')
+    plt.plot(test_point[2], test_point[3], 'ro')
     plt.show()
     # print("\nPrediction Executed Successfully \nPlotting...")
     # If you want to use sequential observation data, at each time step, obtain the observation in the "expected format" (line 394) with a single row
