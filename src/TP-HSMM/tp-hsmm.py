@@ -2,6 +2,9 @@ import numpy as np
 import os
 from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
+import copy
+import random
+import test_sklearn_gmm
 
 class GMM_Component:
     def __init__(self, pi, mus, sigmas):
@@ -15,7 +18,7 @@ class TP_HSMM:
     def __init__(self, data_addr, num_viapts, ndemos, dt=0.1):
                     self.dt = dt
                     self.num_viapts = num_viapts
-                    self.num_gmm_components = 10
+                    self.num_gmm_components = 5
                     self.num_demos = ndemos
 
                     raw_data = self.loadData(data_addr, ndemos)
@@ -36,6 +39,9 @@ class TP_HSMM:
                             demo_wrt_f = demoWrtFrame(d,frames[f])
                             demos_wrt_f.append(demo_wrt_f)
                         self.demos_wrt_frames.append(self.combineData(demos_wrt_f))
+                        # plt.plot(self.demos_wrt_frames[-1][:,0],self.demos_wrt_frames[-1][:,1])
+                        # plt.show()
+                        # test_sklearn_gmm.plot_gmms(self.demos_wrt_frames[-1], n_comp=self.num_gmm_components)
 
                     self.global_gmm = GaussianMixture(n_components=self.num_gmm_components, random_state=0)
                     self.global_gmm.fit(self.combined_data)
@@ -56,7 +62,7 @@ class TP_HSMM:
                         self.gmm_components.append(GMM_Component(pi,mus,sigmas))
 
                     self.encodeDuration_and_stateTransition()
-                    # self.global_gmm.predict([[500,900],[1300,1100]])
+                    self.encodeStateTransitionWRT_Frames()
 
                     # plt.scatter(self.demos_wrt_frames[0][:, 0], self.demos_wrt_frames[0][:, 1], s=0.8, color='red')
                     # plt.scatter(self.demos_wrt_frames[1][:, 0], self.demos_wrt_frames[1][:, 1], s=0.8, color='blue')
@@ -122,10 +128,81 @@ class TP_HSMM:
         self.duration_mean = np.mean(duration_matrix,axis=1)
         self.duration_var = np.var(duration_matrix,axis=1)
 
-    # def predict(self, via_pts):
+    def encodeStateTransitionWRT_Frames(self):
+        self.frame_state_transition = []
+        self.frame_start_state = []
+        for f in range(self.num_frames):
+            prev_state = -1
+            transition_matrix = np.zeros((self.num_gmm_components, self.num_gmm_components))
+            for point in self.demos_wrt_frames[f]:
+                state = self.gmms[f].predict([point])
+                # print(state)
+                if prev_state == -1:
+                    self.frame_start_state.append(state)
+                    prev_state = state
+                    continue
+                if state != prev_state:
+                    # Code for state transition
+                    transition_matrix[prev_state, state] += 1
+                    prev_state = state
+            transition_matrix = transition_matrix / np.sum(transition_matrix, axis=1)[:, None]
+            self.frame_state_transition.append(transition_matrix)
+        self.frame_state_transition_static = copy.deepcopy(self.frame_state_transition)
 
+    def predict(self, via_pts):
+        state_transition_sequence = []
+        frames = np.split(np.array(via_pts),self.num_viapts)
+        frames.append(self.data[np.random.randint(self.num_demos)][0,:])
+        frames.append(self.data[np.random.randint(self.num_demos)][-1, :])
+        print(frames)
+        for f in range(self.num_frames):
+            seq = [self.frame_start_state[f][-1]]
+            pts = [self.gmms[f].means_[seq[-1],:]]
+            for state_num in range(1, self.num_gmm_components):
+                next_state = np.argmax(self.frame_state_transition[f][seq[-1],:])
+                # self.frame_state_transition[f][:,next_state] = -1*np.ones((self.frame_state_transition[f][:,next_state].shape))
+                # if len(seq)>2:
+                #     if next_state==seq[-2]:
+                #         next_state = np.argmax(np.delete(self.frame_state_transition[f][seq[-1],:],next_state))
+                seq.append(next_state)
+                pts.append(self.gmms[f].means_[seq[-1],:])
+            # for pt in pts:
+            #     plt.plot(pt[0], pt[1], 'ro')
+            # plt.show()
+            state_transition_sequence.append(seq)
+        pred_traj_frame = []
+        for f in range(self.num_frames):
+            traj = np.empty((self.num_gmm_components,2)) #TODO: Change 2 to self.robot_dofs
+            for state_num, state in enumerate(state_transition_sequence[f]):
+                traj[state_num,:] = demoWrtFrame(np.array(self.gmms[f].means_[state,:]).reshape((1,-1)),-1*frames[f])
+            pred_traj_frame.append(traj)
 
+        ################# Plotting resulting trajectory #########################
+        # colors = ['red','blue','green','black']
+        # for n,traj in enumerate(pred_traj_frame):
+        #     plt.plot(traj[:, 0], traj[:, 1], color=colors[n])
+        # plt.show()
+        ################# /Plotting resulting trajectory #########################
 
+        # Now that we have the trajectories according to each frame, we have to find out which of the trajectories
+        # should be followed for each point in the trajectory. To find the importance of each point, we find its probability
+        # of being in its own frames gmm. For each point in the actual trajectory, the point from all the frame trajs
+        # with the highest probability of being in its frame's gmm is selected as the most important.
+        final_traj = np.empty((self.num_gmm_components,2))
+        for pt in range(self.num_gmm_components):
+            pt_probabs = []
+            for f in range(self.num_frames):
+                frame_pt = pred_traj_frame[f][pt,:]
+                frame_pt_prob = calcProbPtInGMM(frame_pt, self.gmms[f])
+                pt_probabs.append(frame_pt_prob)
+            most_imp_pt = pred_traj_frame[np.argmax(pt_probabs)][pt,:]
+            print(most_imp_pt)
+            final_traj[pt,:] = most_imp_pt
+        plt.plot(final_traj[:, 0], final_traj[:, 1])
+        for pt in frames:
+            pt = pt.flatten()
+            plt.plot(pt[0],pt[1],'bo')
+        plt.show()
 
 ##########################  /CLASS TP-HSMM  #########################################
 def demoWrtFrame(data, frame_loc, rotation=np.array([[1,0,0],[0,1,0],[0,0,1]])):
@@ -140,10 +217,19 @@ def demoWrtFrame(data, frame_loc, rotation=np.array([[1,0,0],[0,1,0],[0,0,1]])):
         data_wrt_frame[i,:] = point_wrt_frame[[0,1],:].flatten()
     return data_wrt_frame
 
+def calcProbPtInGMM(pt, gmm):
+    # probs = gmm.predict_proba(pt)
+    # prob = 0
+    # for i in range(gmm.n_components):
+    #     prob += probs[i] * gmm.weights_[i]
+    return np.sum(gmm.predict_proba(pt.reshape(1,-1)) * gmm.weights_)
+
 ##################################################
 if __name__ == "__main__":
     data_addr = '../../training_data/TP-HSMM/'
-    ndemos = len(os.listdir(data_addr))
-    # ndemos = 10
+    # ndemos = len(os.listdir(data_addr))
+    ndemos = 9
     tp_hsmm = TP_HSMM(data_addr=data_addr,num_viapts=2,ndemos=ndemos,dt=0.1)
-    print('Khatam')
+    query = [[random.randint(300,700),random.randint(875,1200)],[random.randint(1300,1700),random.randint(875,1200)]]
+    # query = [[500,1000],[1500,900]]
+    tp_hsmm.predict(query)

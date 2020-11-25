@@ -21,12 +21,13 @@ GRIPPER_CLOSED_LINE_COLOR = RED
 GRIPPER_OPEN_LINE_COLOR = BLACK
 LINE_COLOR = BLACK
 REC_TRAJECTORY = []
-SAVE_LOCATION = '/home/thejus/catkin_ws/src/movement_primitives/training_data/TP-HSMM/'
+SAVE_LOCATION = '/home/thejus/catkin_ws/src/movement_primitives/training_data/TP-HSMM_curvy/'
 SAVE_FREQ = 8 #The mouse position will be saved after every SAVE_FREQ iterations of the while loop
 GRIPPER_STATUS = 0 #0 = Open, 1 = Closed
 LEFT_POINT_BOUNDS = [[300,700],[875,1200]] #x1,x2; y1,y2
 RIGHT_POINT_BOUNDS = [[1300,1700],[875,1200]]
 POINTS = []
+STATIC_POINT_SET = [(500,900),(1500,1000),(400,1100),(1600,1100)]
 # status_surface = pygame.Surface()
 
 class Button:
@@ -95,12 +96,12 @@ def stopRecording(game_display):
     updateStatus('Recording Complete',game_display)
 
 def generatePointPos(npoints):
+    global STATIC_POINT_SET
     points = []
 
     # Static
-    # static_point_set = [(500,900),(1500,500),(1500,1200),(900,1100)]
     # for i in range(npoints):
-    #     points.append(static_point_set[i])
+    #     points.append(STATIC_POINT_SET[i])
 
     # Dynamic
     for i in range(npoints):

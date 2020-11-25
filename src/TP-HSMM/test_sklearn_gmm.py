@@ -7,7 +7,7 @@ from sklearn import datasets
 
 def make_ellipses(gmm, ax):
     color = 'navy'
-    for n in range(10):
+    for n in range(gmm.n_components):
         covariances = gmm.covariances_[n][:2, :2]
         v, w = np.linalg.eigh(covariances)
         u = w[0] / np.linalg.norm(w[0])
@@ -21,6 +21,22 @@ def make_ellipses(gmm, ax):
         ax.add_artist(ell)
         ax.set_aspect('equal', 'datalim')
 
+def plot_gmms(data, gmm=None, n_comp = None):
+    if gmm==None:
+        gmm = GaussianMixture(n_components=n_comp, random_state=0)
+        gmm.fit(data)
+    ax = plt.subplot(1, 1, 1)
+    make_ellipses(gmm, ax)
+    plt.scatter(data[:, 0], data[:, 1], s=0.8, color='red')
+    # x = [[1500, 1080]]
+    # plt.plot(x[0][0], x[0][1], 'bo')
+    # comp = gmm.predict(x)[0]
+    # plt.plot(gmm.means_[comp][0], gmm.means_[comp][1], 'go')
+    for i in range(gmm.n_components):
+        plt.text(gmm.means_[i][0],gmm.means_[i][1],str(i+1),color='blue')
+
+    plt.show()
+
 if __name__ == '__main__':
     data = []
     data_addr = '../../training_data/TP-HSMM/'
@@ -30,20 +46,18 @@ if __name__ == '__main__':
     for i in range(1, len(data)):
         positions = np.append(positions, data[i], axis=0)
     positions = np.delete(positions,[2,3,4,5],1)
-    # print(positions[0:10])
-
-    sk_data = datasets.load_iris().data
-    gmm = GaussianMixture(n_components=10,random_state=0)
+    gmm = GaussianMixture(n_components=10, random_state=0)
     gmm.fit(positions)
-    ax = plt.subplot(1,1,1)
-    make_ellipses(gmm,ax)
-    # plt.scatter(gmm.means_[:,0],gmm.means_[:,1])
-    # for n in range(10):
-    for n in range(len(data)):
-        plt.scatter(data[n][:,0], data[n][:, 1], s=0.8, color='red')
-    x = [[1500,1080]]
-    plt.plot(x[0][0],x[0][1],'bo')
-    comp = gmm.predict(x)[0]
-    plt.plot(gmm.means_[comp][0],gmm.means_[comp][1], 'go')
 
-    plt.show()
+    plot_gmms(positions, gmm)
+    # gmm = GaussianMixture(n_components=10,random_state=0)
+    # gmm.fit(positions)
+    # ax = plt.subplot(1,1,1)
+    # make_ellipses(gmm,ax)
+    # plt.scatter(positions[:, 0], positions[:, 1], s=0.8, color='red')
+    # x = [[1500,1080]]
+    # plt.plot(x[0][0],x[0][1],'bo')
+    # comp = gmm.predict(x)[0]
+    # plt.plot(gmm.means_[comp][0],gmm.means_[comp][1], 'go')
+    #
+    # plt.show()
