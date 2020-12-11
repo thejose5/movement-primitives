@@ -52,6 +52,8 @@ find_package(catkin REQUIRED COMPONENTS
    PrompTrainMsg.msg
    PrompQueryTrigger.msg
    RobotTraj.msg
+   TPHSMMTrainMsg.msg
+   TPHSMMQueryTrigger.msg
  )
 
 ## Generate services in the 'srv' folder
@@ -120,7 +122,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-catkin_install_python(PROGRAMS src/ProMP/promp_train_server.py src/ProMP/promp_train_client.py src/ProMP/promp_train_listener.py src/ProMP/promp_train_caller.py src/ProMP/promp_query_caller.py src/ProMP/promp_query_listener.py
+catkin_install_python(PROGRAMS src/ProMP/promp_train_listener.py src/ProMP/promp_train_caller.py src/ProMP/promp_query_caller.py src/ProMP/promp_query_listener.py src/ProMP/inter_promp_train_py2.py
+
+src/TP-HSMM/tphsmm_v2.py src/TP-HSMM/tphsmm_query_caller.py src/TP-HSMM/tphsmm_query_listener.py src/TP-HSMM/tphsmm_train_caller.py src/TP-HSMM/tphsmm_train_listener.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 ## Declare a C++ library

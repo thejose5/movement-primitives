@@ -10,6 +10,7 @@ from scipy import linalg
 
 class ProMP:
     def __init__(self, ndemos=50, hum_dofs=2, robot_dofs=2, dt=0.1, training_address="Data\Human A Robot B 1"):
+        # assert sys.version_info[0] == 3
         self.ndemos = ndemos
         self.human_dofs = hum_dofs
         self.robot_dofs = robot_dofs
@@ -43,7 +44,7 @@ class ProMP:
         data = []
         for i in range(self.ndemos):
             data.append(np.loadtxt(open(addr + str(i + 1) + ""), delimiter=","))
-
+        print(data)
         return data
 
     def PhaseNormalization(self, data):
@@ -386,8 +387,10 @@ def trajectorizePoints(test_point,pmp):
 
 def main(args):
 
-    data_addr = '../../training_data/ProMP/'
+    # data_addr = '../../training_data/ProMP/'
+    data_addr = '/home/thejus/catkin_ws/src/movement_primitives/training_data/ProMP/'
     ndemos = len(os.listdir(data_addr))
+    print(ndemos)
     pmp = ProMP(ndemos=ndemos, hum_dofs=4, robot_dofs=3, dt=0.1, training_address=data_addr)
     # To give different inputs change the parameters passed to the constructor above.
     # ndemos = No. of demos, hum_dofs = master dofs, robot_dofs = slave dofs, dt = delta t between 2 position measurements in a demo
@@ -402,10 +405,11 @@ def main(args):
     # test_data = np.append(test_data, np.zeros((test_data.shape[0], 2)), axis=1)
 
     # Expected observation data format: [col(obs of human dof1),col(obs of human dof2),...,col(obs of last human dof), (columns of zeros for each robot dof)]
-    test_point = [500,1000,1500,1000]
-    test_data = np.zeros((len(pmp.ndata[0]),7))
-    for i in range(len(pmp.ndata[0])):
-        test_data[i,0:4] = test_point
+    test_point = [400,900,1600,1000]
+    test_data = trajectorizePoints(test_point,pmp)
+    # test_data = np.zeros((len(pmp.ndata[0]),7))
+    # for i in range(len(pmp.ndata[0])):
+    #     test_data[i,0:4] = test_point
     traj = pmp.predict(test_data)
     plt.figure(1)
     plt.plot(traj[:,4],traj[:,5])

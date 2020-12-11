@@ -2,9 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7cdb9336-6c9e-462a-8c55-b13a83a9029d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../KMP/kmp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../TP-HSMM/tp-hsmm_v2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inter_promp_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/inter_promp_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/promp_query_listener.py" beforeDir="false" afterPath="$PROJECT_DIR$/promp_query_listener.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/promp_train_listener.py" beforeDir="false" afterPath="$PROJECT_DIR$/promp_train_listener.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TP-HSMM/tp-hsmm.py" beforeDir="false" afterPath="$PROJECT_DIR$/../TP-HSMM/tp-hsmm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TP-HSMM/tp-hsmm_rec.py" beforeDir="false" afterPath="$PROJECT_DIR$/../TP-HSMM/tp-hsmm_rec.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,9 +33,9 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/github repos cloned/TSCL-master/addition" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.inter_promp_train">
     <configuration name="inter_promp_train" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ProMP" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -118,8 +122,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.inter_promp_train" />
+        <item itemvalue="Python.main" />
         <item itemvalue="Python.promp_record" />
         <item itemvalue="Python.promp_srcode" />
       </list>
@@ -141,22 +145,22 @@
       <screen x="67" y="27" width="1533" height="872" />
     </state>
     <state x="618" y="199" width="426" height="494" key="FileChooserDialogImpl/67.27.1533.872@67.27.1533.872" timestamp="1605134709017" />
-    <state width="729" height="217" key="GridCell.Tab.0.bottom" timestamp="1605058923981">
+    <state width="721" height="217" key="GridCell.Tab.0.bottom" timestamp="1607145624532">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="729" height="217" key="GridCell.Tab.0.bottom/67.27.1533.872@67.27.1533.872" timestamp="1605058923981" />
-    <state width="729" height="217" key="GridCell.Tab.0.center" timestamp="1605058923981">
+    <state width="721" height="217" key="GridCell.Tab.0.bottom/67.27.1533.872@67.27.1533.872" timestamp="1607145624532" />
+    <state width="721" height="217" key="GridCell.Tab.0.center" timestamp="1607145624530">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="729" height="217" key="GridCell.Tab.0.center/67.27.1533.872@67.27.1533.872" timestamp="1605058923981" />
-    <state width="729" height="217" key="GridCell.Tab.0.left" timestamp="1605058923980">
+    <state width="721" height="217" key="GridCell.Tab.0.center/67.27.1533.872@67.27.1533.872" timestamp="1607145624530" />
+    <state width="721" height="217" key="GridCell.Tab.0.left" timestamp="1607145624530">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="729" height="217" key="GridCell.Tab.0.left/67.27.1533.872@67.27.1533.872" timestamp="1605058923980" />
-    <state width="729" height="217" key="GridCell.Tab.0.right" timestamp="1605058923981">
+    <state width="721" height="217" key="GridCell.Tab.0.left/67.27.1533.872@67.27.1533.872" timestamp="1607145624530" />
+    <state width="721" height="217" key="GridCell.Tab.0.right" timestamp="1607145624531">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
-    <state width="729" height="217" key="GridCell.Tab.0.right/67.27.1533.872@67.27.1533.872" timestamp="1605058923981" />
+    <state width="721" height="217" key="GridCell.Tab.0.right/67.27.1533.872@67.27.1533.872" timestamp="1607145624531" />
     <state width="1508" height="270" key="GridCell.Tab.1.bottom" timestamp="1602768894152">
       <screen x="67" y="27" width="1533" height="872" />
     </state>
@@ -185,11 +189,6 @@
           <url>file:///media/thejus/Data/Motion Planning Project/source_code/promp_srcode.py</url>
           <line>401</line>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/inter_promp_train.py</url>
-          <line>408</line>
-          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
