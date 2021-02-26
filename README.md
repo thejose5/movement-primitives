@@ -1,4 +1,4 @@
-#Movement Primitives  
+#Movement Primitives
 This  repository contains the implementation of algorithms for robot learning from human demonstration on ROS.
 
 *Folder Descriptions:*
