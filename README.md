@@ -2,11 +2,11 @@
   
 This  repository contains the implementation of algorithms for robot learning from human demonstration on ROS.
 
-*Folder Descriptions:*
-msg: Contains all the .msg files used in this repository
-saved_primitives: Contains trained Primitives
-src: contains the source code for the implementation of each algorithm
-training_data: Contains the data used to train movement primitives
+**Folder Descriptions:**  
+*msg*: Contains all the .msg files used in this repository  
+*saved_primitives*: Contains trained Primitives  
+*src*: contains the source code for the implementation of each algorithm  
+*training_data*: Contains the data used to train movement primitives  
 
 *The following algorithms have been implemented currently*
 1. Interaction Probabilistic Movement Primitives:
