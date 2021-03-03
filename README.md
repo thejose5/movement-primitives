@@ -12,9 +12,12 @@ This  repository contains the implementation of algorithms for robot learning fr
 ## 1. Interaction Probabilistic Movement Primitives:
 Maeda, G., Ewerton, M., Neumann, G., Lioutikov, R. and Peters, J., 2017. Phase estimation for fast action recognition and trajectory generation in human–robot collaboration. The International Journal of Robotics Research, 36(13-14), pp.1579-1594.
 
-![ProMP Demonstrations](/images/promp_demo.png)
-![ProMP Python Implementation](/images/promp_python_implementation.png)
-![ProMP ROS Framework](/images/promp_ros.png)
+![ProMP Demonstrations](/images/promp_demo.png)  
+
+![ProMP Python Implementation](/images/promp_python_implementation.png)  
+
+![ProMP ROS Framework](/images/promp_ros.png)  
+
 ![ProMP Results](/images/promp_results.png)
 
 
