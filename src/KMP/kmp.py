@@ -13,7 +13,7 @@ class ReferenceTrajectoryPoint:
         self.sigma = sigma
 
 class GMM:
-    def __init__(self, num_vars, data, num_states=8, dt=0.05):
+    def __init__(self, num_vars, data, num_states=8, dt=0.005):
         self.num_vars = num_vars
         self.num_states = num_states
         self.dt = dt #dt for the GMM model
@@ -34,13 +34,13 @@ class GMM:
 
         self.priors = np.empty((self.num_states,))
         self.mu = np.empty((self.num_vars,self.num_states))
-        self.sigma = np.empty((self.num_vars, self.num_vars, self.num_states))
+        self.sigma = np.empty((self.num_states, self.num_vars, self.num_vars))
         for i in range(self.num_states):
             idtmp = np.where((timing_sep[i]<=data[0,:]) & (data[0,:]<timing_sep[i+1]))[0] # Extracts the indices of data points that lie within the ith time bracket
             self.priors[i] = idtmp.shape[0] #This will be changed to a normalized value after the for loop
             self.mu[:,i] = [np.mean(data[j,idtmp]) for j in range(self.num_vars)] # Average of each row
-            self.sigma[:,:,i] = np.cov(data[:,idtmp])
-            self.sigma[:,:,i] = self.sigma[:,:,i] + np.eye(num_vars)*diag_reg_factor # Adding regularization factor
+            self.sigma[i,:,:] = np.cov(data[:,idtmp])
+            self.sigma[i,:,:] = self.sigma[i,:,:] + np.eye(num_vars)*diag_reg_factor # Adding regularization factor
         self.priors = self.priors/sum(self.priors)
 
     def EM_GMM(self, data):
@@ -59,7 +59,7 @@ class GMM:
                 self.mu[:,i] = (np.matmul(data, gamma2[i,:].reshape((gamma2.shape[1],1)))).reshape(self.mu[:,i].shape)
                 #Update sigma
                 datatmp = data - np.repeat(self.mu[:,i].reshape((self.mu.shape[0],1)),data.shape[1],1)
-                self.sigma[:,:,i] = np.matmul(np.matmul(datatmp, np.diag(gamma2[i,:])), datatmp.T) + np.eye(data.shape[0]) * self.em_diag_reg_factor
+                self.sigma[i,:,:] = np.matmul(np.matmul(datatmp, np.diag(gamma2[i,:])), datatmp.T) + np.eye(data.shape[0]) * self.em_diag_reg_factor
                 # self.sigma[:, :, i] = np.asarray(np.asmatrix(datatmp) * np.asmatrix(np.diag(gamma2[i,:])) * np.asmatrix(datatmp.T)) + np.eye(data.shape[0]) * self.em_diag_reg_factor
             LL.append(sum(np.log(np.sum(L,axis=0)))/data.shape[1]) # Average Log likelihood
             if iter>=self.em_num_min_steps:
@@ -73,7 +73,7 @@ class GMM:
     def computeGamma(self,data):
         L = np.zeros((self.num_states,data.shape[1]))
         for i in range(self.num_states):
-            L[i,:] = self.priors[i]*gaussPDF(data,self.mu[:,i],self.sigma[:,:,i])
+            L[i,:] = self.priors[i]*gaussPDF(data,self.mu[:,i],self.sigma[i,:,:])
         L_axis0_sum = np.sum(L,axis=0)
         gamma = np.divide(L, np.repeat(L_axis0_sum.reshape(1,L_axis0_sum.shape[0]), self.num_states, axis=0))
         return L,gamma
@@ -89,16 +89,30 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
 
         self.training_data = self.loadData(addr=data_address) # Fetching the data from the saved location
         self.norm_data = self.normalizeData(self.training_data) # Making all demos have the same length
-        self.demo_duration = self.training_data[0].shape[0] * self.demo_dt
+        self.demo_duration = 200 * self.demo_dt #self.training_data[0].shape[0] * self.demo_dt
         self.data = self.combineData(self.norm_data)
 
         self.gmm_model = GMM(num_vars=(self.input_dofs+self.robot_dofs), data=self.data)
         self.model_num_datapts = int(self.demo_duration/self.gmm_model.dt)
-        self.data_out, self.sigma_out, _ = self.GMR(self.gmm_model, np.array(range(self.model_num_datapts)) * self.gmm_model.dt, range(self.input_dofs), range(1,(self.input_dofs+self.robot_dofs)))
+        self.data_out, self.sigma_out, _ = self.GMR(self.gmm_model, np.array(range(1,self.model_num_datapts+1)) * self.gmm_model.dt, range(self.input_dofs), range(1,(self.input_dofs+self.robot_dofs)))
+
+        ####### DEBUGGING ##############
+        # plt.scatter(self.data[1,:],self.data[2,:])
+        # for i in range(self.gmm_model.num_states):
+        #     plt.plot(self.gmm_model.mu[1,i],self.gmm_model.mu[2,i], 'ro')
+        # plt.show()
+        ##################################
 
         self.ref_traj = []
         for i in range(self.model_num_datapts):
-            self.ref_traj.append(ReferenceTrajectoryPoint(t=(i+1)*self.gmm_model.dt, mu=self.data_out[:,i], sigma=self.sigma_out[:,:,i]))
+            self.ref_traj.append(ReferenceTrajectoryPoint(t=(i+1)*self.gmm_model.dt, mu=self.data_out[:,i], sigma=self.sigma_out[i,:,:]))
+
+        ####### DEBUGGING ##############
+        # ref_path = extractPath(self.ref_traj)
+        # plt.plot(ref_path[:, 0], ref_path[:, 1], 'r')
+        # plt.title('Reference Path')
+        # plt.show()
+        ##################################
 
         print('KMP Initialized with Reference Trajectory')
     ###################################
@@ -169,23 +183,30 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
 
         mu_tmp = np.zeros((num_varout, self.gmm_model.num_states))
         exp_data = np.zeros((num_varout, num_datapts))
-        exp_sigma = np.zeros((num_varout, num_varout, num_datapts))
+        exp_sigma = np.zeros((num_datapts, num_varout, num_varout))
 
         H = np.empty((self.gmm_model.num_states, num_datapts))
         for t in range(num_datapts):
             # Compute activation weights
             for i in range(self.gmm_model.num_states):
-                H[i,t] = self.gmm_model.priors[i] * gaussPDF(data_in[:,t].reshape((-1,1)), self.gmm_model.mu[input_dofs_list,i], self.gmm_model.sigma[input_dofs_list,input_dofs_list,i])
+                H[i,t] = self.gmm_model.priors[i] * gaussPDF(data_in[:,t].reshape((-1,1)), self.gmm_model.mu[input_dofs_list,i], self.gmm_model.sigma[i,input_dofs_list,input_dofs_list])
+                # print(gaussPDF(data_in[:,t].reshape((-1,1)), self.gmm_model.mu[input_dofs_list,i], self.gmm_model.sigma[input_dofs_list,input_dofs_list,i]))
             H[:,t] = H[:,t]/(sum(H[:,t]) + 1e-10)
+            # print(H)
             # Compute conditional means
             for i in range(self.gmm_model.num_states):
-                mu_tmp[:,i] = self.gmm_model.mu[output_dofs_list,i] + self.gmm_model.sigma[output_dofs_list,input_dofs_list,i]/self.gmm_model.sigma[input_dofs_list,input_dofs_list,i] * (data_in[:,t].reshape((-1,1)) - self.gmm_model.mu[input_dofs_list,i])
+                mu_tmp[:,i] = self.gmm_model.mu[output_dofs_list,i] + self.gmm_model.sigma[i,output_dofs_list,input_dofs_list]/self.gmm_model.sigma[i,input_dofs_list,input_dofs_list] * (data_in[:,t].reshape((-1,1)) - self.gmm_model.mu[input_dofs_list,i])
                 exp_data[:,t] = exp_data[:,t] + H[i,t] * mu_tmp[:,i]
+                # print("Mu_tmp: ",mu_tmp[:,i])
+                # print(H[i,t] * mu_tmp[:,i])
+
             # Compute conditional covariance
             for i in range(self.gmm_model.num_states):
-                sigma_tmp = self.gmm_model.sigma[output_dofs_list,output_dofs_list,i] - self.gmm_model.sigma[output_dofs_list,input_dofs_list,i]/self.gmm_model.sigma[input_dofs_list,input_dofs_list,i] * self.gmm_model.sigma[input_dofs_list,output_dofs_list,i]
-                exp_sigma[:,:,t] = exp_sigma[:,:,t] + H[i,t] * (sigma_tmp + mu_tmp[:,i]*mu_tmp[:,i].T)
-            exp_sigma[:,:,t] = exp_sigma[:,:,t] - exp_data[:,t] * exp_data[:,t].T + np.eye(num_varout) * diag_reg_factor
+                sigma_tmp = self.gmm_model.sigma[i,output_dofs_list,output_dofs_list] - self.gmm_model.sigma[i,output_dofs_list,input_dofs_list]/self.gmm_model.sigma[i,input_dofs_list,input_dofs_list] * self.gmm_model.sigma[i,input_dofs_list,output_dofs_list]
+                print(sigma_tmp)
+                exp_sigma[t,:,:] = exp_sigma[t,:,:] + H[i,t] * (sigma_tmp + mu_tmp[:,i]*mu_tmp[:,i].T)
+                print(exp_sigma[t,:,:])
+            exp_sigma[t,:,:] = exp_sigma[t,:,:] - exp_data[:,t] * exp_data[:,t].T + np.eye(num_varout) * diag_reg_factor
         return exp_data, exp_sigma, H
 
     def setParams(self, dt, lamda, kh):
@@ -208,8 +229,8 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
                     min_dist = dist
                     # print("min_dist: ", min_dist)
                     replace_ind = i
-            via_pt = np.append(np.array(via_pt),self.ref_traj[replace_ind].mu[2:4])
-            self.new_ref_traj[replace_ind] = ReferenceTrajectoryPoint(t=self.ref_traj[replace_ind].t, mu=via_pt, sigma=via_pt_var)
+            # via_pt = np.append(np.array(via_pt),self.ref_traj[replace_ind].mu[2:4])
+            self.new_ref_traj[replace_ind] = ReferenceTrajectoryPoint(t=self.ref_traj[replace_ind].t, mu=np.array(via_pt), sigma=via_pt_var)
     ###################################
 
     def estimateMatrixMean(self):
@@ -218,10 +239,11 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
         kc = np.empty((D*N, D*N))
         for i in range(N):
             for j in range(N):
-                # print("i.t: ", self.new_ref_traj[i].t, "j.t ", self.new_ref_traj[j].t)
+                # print(kernelExtend(self.new_ref_traj[i].t, self.new_ref_traj[j].t, self.kh, self.robot_dofs))
                 kc[i*D:(i+1)*D, j*D:(j+1)*D] = kernelExtend(self.new_ref_traj[i].t, self.new_ref_traj[j].t, self.kh, self.robot_dofs)
                 if i==j:
                     c_temp = self.new_ref_traj[i].sigma
+                    print(c_temp)
                     kc[i*D:(i+1)*D, j*D:(j+1)*D] = kc[i*D:(i+1)*D, j*D:(j+1)*D] + self.lamda * c_temp
         # print(kc[:200,:200])
         Kinv = np.linalg.inv(kc)
@@ -239,6 +261,7 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
         ################################
 
         Kinv = self.estimateMatrixMean()
+        # print(Kinv)
         self.kmp_pred_traj = []
         # print("Kinv: Shape: ", Kinv.shape)
         # print(Kinv[:200,:200])
@@ -273,11 +296,12 @@ def gaussPDF(data, mu, sigma):
     num_vars, num_datapts = data.shape
     data = data.T - np.repeat(mu.reshape((1, mu.shape[0])), [num_datapts], axis=0)
     if num_vars==1 and num_datapts==1:
-        prob = data**2 * sigma
+        prob = data**2 / sigma
         prob = np.e ** (-0.5 * prob) / (np.sqrt((2 * np.pi) ** num_vars * sigma))
     else:
         prob = np.sum(np.multiply(np.matmul(data, np.linalg.inv(sigma)), data), axis=1)
         prob = np.e ** (-0.5 * prob) / (np.sqrt((2 * np.pi) ** num_vars * abs(np.linalg.det(sigma))))
+    # print(prob)
     return prob
 #################
 
@@ -288,7 +312,7 @@ def distBWPts(pt1, pt2):
 ##################
 
 def kernelExtend(ta, tb, h, dim):
-    dt = 0.01
+    dt = 0.001
     tadt = ta + dt
     tbdt = tb + dt
 
@@ -316,22 +340,22 @@ def kernelExtend(ta, tb, h, dim):
 def extractPath(traj):
     path = np.empty((len(traj),4))
     for i in range(len(traj)):
-        path[i,:] = (traj[i].mu).flatten()
+        path[i,:] = traj[i].mu.flatten()
     return path
 
 
 ###############################################################################
 
 if __name__ == "__main__":
-    data_addr = '../../training_data/KMP_static/'
+    data_addr = '../../training_data/KMP_G/'
     ndemos = len(os.listdir(data_addr))
     # ndemos = 10
-    kmp = KMP(input_dofs=1, robot_dofs=4, demo_dt=0.1, ndemos=ndemos, data_address=data_addr)
+    kmp = KMP(input_dofs=1, robot_dofs=4, demo_dt=0.01, ndemos=ndemos, data_address=data_addr)
 
     # Set KMP params (This dt is KMP's dt)
-    kmp.setParams(dt=0.05, lamda=0.002, kh=0.0006)
+    kmp.setParams(dt=0.005, lamda=1, kh=6)
     # Set desired via points
-    via_pts = [[500,1000],[1500,1000]]
+    via_pts = [[8, 10, -50, 0],[-1, 6, -25, -40], [8, -4, 30, 10], [-3, 1, -10, 3]]
     via_pt_var = 1e-6 * np.eye(kmp.ref_traj[0].sigma.shape[0])
 
     #KMP Prediction
@@ -349,5 +373,7 @@ if __name__ == "__main__":
     plt.plot(ref_path[:, 0], ref_path[:, 1], 'g')
     plt.plot(via_pts[0][0], via_pts[0][1], 'bo')
     plt.plot(via_pts[1][0], via_pts[1][1], 'bo')
+    plt.plot(via_pts[2][0], via_pts[2][1], 'bo')
+    plt.plot(via_pts[3][0], via_pts[3][1], 'bo')
     plt.show()
 
