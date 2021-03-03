@@ -14,11 +14,11 @@ Maeda, G., Ewerton, M., Neumann, G., Lioutikov, R. and Peters, J., 2017. Phase e
 
 ![ProMP Demonstrations](/images/promp_demo.png)  
 
-![ProMP Python Implementation](/images/promp_python_implementation.png)  
+![ProMP Python Implementation](/images/promp_python_implementation.PNG)  
 
-![ProMP ROS Framework](/images/promp_ros.png)  
+![ProMP ROS Framework](/images/promp_ros.PNG)  
 
-![ProMP Results](/images/promp_results.png)
+![ProMP Results](/images/promp_results.PNG)
 
 
 ## 2. Task Parameterized Hidden Semi Markov Models:
