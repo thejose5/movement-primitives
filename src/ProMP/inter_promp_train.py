@@ -21,6 +21,13 @@ class ProMP:
         # data is a list, the ith element of which represents an Nx4 array containing the data of the ith demo
         self.data = self.loadData(training_address)
         print("Data Loaded")
+
+        ############# DISPLAY ################
+        # for d in self.data:
+        #     plt.plot(d[:,4],d[:,5])
+        # plt.show()
+        ######################################
+
         # Time normalization and encoding alpha
         self.alpha, self.alphaM, self.alphaV, self.mean_time_steps = self.PhaseNormalization(self.data)
         print("Alphas Obtained")
