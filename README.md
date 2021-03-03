@@ -23,3 +23,11 @@ Maeda, G., Ewerton, M., Neumann, G., Lioutikov, R. and Peters, J., 2017. Phase e
 
 ## 2. Task Parameterized Hidden Semi Markov Models:
 Havoutis, Ioannis, and Sylvain Calinon. "Learning from demonstration for semi-autonomous teleoperation." Autonomous Robots 43.3 (2019): 713-726.
+
+![TP-HSMM Demonstrations](/images/tphsmm_demonstrations&gmm.PNG)  
+
+![TP-HSMM Python Implementation](/images/tp-hsmm_python.png)  
+
+![TP-HSMM ROS Framework](/images/tphsmm_ros2.png)  
+
+![TP-HSMM Results](/images/tphsmm_results2.png)
