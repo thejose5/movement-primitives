@@ -94,7 +94,7 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
 
         self.gmm_model = GMM(num_vars=(self.input_dofs+self.robot_dofs), data=self.data)
         self.model_num_datapts = int(self.demo_duration/self.gmm_model.dt)
-        self.data_out, self.sigma_out, _ = self.GMR(self.gmm_model, np.array(range(1,self.model_num_datapts+1)) * self.gmm_model.dt, range(self.input_dofs), range(1,(self.input_dofs+self.robot_dofs)))
+        self.data_out, self.sigma_out, _ = self.GMR(np.array(range(1,self.model_num_datapts+1)) * self.gmm_model.dt)
 
         ####### DEBUGGING ##############
         # plt.scatter(self.data[1,:],self.data[2,:])
@@ -175,10 +175,10 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
         return positions
     #############################
 
-    def GMR(self, model, data_in_raw, input_dofs_list, output_dofs_list):
+    def GMR(self, data_in_raw):
         data_in = data_in_raw.reshape((1,data_in_raw.shape[0]))
         num_datapts = data_in.shape[1]
-        num_varout = len(output_dofs_list)
+        num_varout = self.robot_dofs
         diag_reg_factor = 1e-8
 
         mu_tmp = np.zeros((num_varout, self.gmm_model.num_states))
@@ -189,23 +189,23 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
         for t in range(num_datapts):
             # Compute activation weights
             for i in range(self.gmm_model.num_states):
-                H[i,t] = self.gmm_model.priors[i] * gaussPDF(data_in[:,t].reshape((-1,1)), self.gmm_model.mu[input_dofs_list,i], self.gmm_model.sigma[i,input_dofs_list,input_dofs_list])
-                # print(gaussPDF(data_in[:,t].reshape((-1,1)), self.gmm_model.mu[input_dofs_list,i], self.gmm_model.sigma[input_dofs_list,input_dofs_list,i]))
+                H[i,t] = self.gmm_model.priors[i] * gaussPDF(data_in[:,t].reshape((-1,1)), self.gmm_model.mu[0:self.input_dofs,i], self.gmm_model.sigma[i,0:self.input_dofs,0:self.input_dofs])
+                # print(gaussPDF(data_in[:,t].reshape((-1,1)), self.gmm_model.mu[0:self.input_dofs,i], self.gmm_model.sigma[0:self.input_dofs,0:self.input_dofs,i]))
             H[:,t] = H[:,t]/(sum(H[:,t]) + 1e-10)
             # print(H)
             # Compute conditional means
             for i in range(self.gmm_model.num_states):
-                mu_tmp[:,i] = self.gmm_model.mu[output_dofs_list,i] + self.gmm_model.sigma[i,output_dofs_list,input_dofs_list]/self.gmm_model.sigma[i,input_dofs_list,input_dofs_list] * (data_in[:,t].reshape((-1,1)) - self.gmm_model.mu[input_dofs_list,i])
+                mu_tmp[:,i] = self.gmm_model.mu[self.input_dofs:(self.input_dofs+self.robot_dofs),i] + self.gmm_model.sigma[i,0:self.input_dofs,self.input_dofs:(self.input_dofs+self.robot_dofs)]/self.gmm_model.sigma[i,0:self.input_dofs,0:self.input_dofs] * (data_in[:,t].reshape((-1,1)) - self.gmm_model.mu[0:self.input_dofs,i])
                 exp_data[:,t] = exp_data[:,t] + H[i,t] * mu_tmp[:,i]
                 # print("Mu_tmp: ",mu_tmp[:,i])
                 # print(H[i,t] * mu_tmp[:,i])
 
             # Compute conditional covariance
             for i in range(self.gmm_model.num_states):
-                sigma_tmp = self.gmm_model.sigma[i,output_dofs_list,output_dofs_list] - self.gmm_model.sigma[i,output_dofs_list,input_dofs_list]/self.gmm_model.sigma[i,input_dofs_list,input_dofs_list] * self.gmm_model.sigma[i,input_dofs_list,output_dofs_list]
-                print(sigma_tmp)
+                sigma_tmp = self.gmm_model.sigma[i,self.input_dofs:(self.input_dofs+self.robot_dofs),self.input_dofs:(self.input_dofs+self.robot_dofs)] - self.gmm_model.sigma[i,self.input_dofs:(self.input_dofs+self.robot_dofs),0:self.input_dofs]/self.gmm_model.sigma[i,0:self.input_dofs,0:self.input_dofs] * self.gmm_model.sigma[i,0:self.input_dofs,self.input_dofs:(self.input_dofs+self.robot_dofs)]
+                # print(sigma_tmp)
                 exp_sigma[t,:,:] = exp_sigma[t,:,:] + H[i,t] * (sigma_tmp + mu_tmp[:,i]*mu_tmp[:,i].T)
-                print(exp_sigma[t,:,:])
+                # print(exp_sigma[t,:,:])
             exp_sigma[t,:,:] = exp_sigma[t,:,:] - exp_data[:,t] * exp_data[:,t].T + np.eye(num_varout) * diag_reg_factor
         return exp_data, exp_sigma, H
 
