@@ -13,7 +13,7 @@ class ReferenceTrajectoryPoint:
         self.sigma = sigma
 
 class GMM:
-    def __init__(self, num_vars, data, num_states=8, dt=0.005):
+    def __init__(self, num_vars, data, num_states=8, dt=0.05):
         self.num_vars = num_vars
         self.num_states = num_states
         self.dt = dt #dt for the GMM model
@@ -141,12 +141,11 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
         alpha_mean = np.mean(alpha)
         mean_t = int(mean)
 
-        # normalize the data to contain same number of data points
+        # normalize the data so that all demos contain same number of data points
         ndata = []
         for i in range(len(alpha)):
             demo_ndata = np.empty((0, dofs))
-            for j in range(
-                    mean_t):  # Number of phase steps is same as number of time steps in nominal trajectory, because for nominal traj alpha is 1
+            for j in range(mean_t):  # Number of phase steps is same as number of time steps in nominal trajectory, because for nominal traj alpha is 1
                 z = j * alpha[i] * dt
                 corr_timestep = z / dt
                 whole = int(corr_timestep)
@@ -229,7 +228,9 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
                     min_dist = dist
                     # print("min_dist: ", min_dist)
                     replace_ind = i
-            # via_pt = np.append(np.array(via_pt),self.ref_traj[replace_ind].mu[2:4])
+            if(len(via_pt)==2):
+                print(self.ref_traj[replace_ind].mu[2:4])
+                via_pt = np.append(np.array(via_pt),self.ref_traj[replace_ind].mu[2:4])
             self.new_ref_traj[replace_ind] = ReferenceTrajectoryPoint(t=self.ref_traj[replace_ind].t, mu=np.array(via_pt), sigma=via_pt_var)
     ###################################
 
@@ -243,7 +244,6 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
                 kc[i*D:(i+1)*D, j*D:(j+1)*D] = kernelExtend(self.new_ref_traj[i].t, self.new_ref_traj[j].t, self.kh, self.robot_dofs)
                 if i==j:
                     c_temp = self.new_ref_traj[i].sigma
-                    print(c_temp)
                     kc[i*D:(i+1)*D, j*D:(j+1)*D] = kc[i*D:(i+1)*D, j*D:(j+1)*D] + self.lamda * c_temp
         # print(kc[:200,:200])
         Kinv = np.linalg.inv(kc)
@@ -312,7 +312,7 @@ def distBWPts(pt1, pt2):
 ##################
 
 def kernelExtend(ta, tb, h, dim):
-    dt = 0.001
+    dt = 0.01
     tadt = ta + dt
     tbdt = tb + dt
 
@@ -347,15 +347,16 @@ def extractPath(traj):
 ###############################################################################
 
 if __name__ == "__main__":
-    data_addr = '../../training_data/KMP_G/'
+    data_addr = '../../training_data/KMP_div1000/'
     ndemos = len(os.listdir(data_addr))
     # ndemos = 10
-    kmp = KMP(input_dofs=1, robot_dofs=4, demo_dt=0.01, ndemos=ndemos, data_address=data_addr)
+    kmp = KMP(input_dofs=1, robot_dofs=4, demo_dt=0.1, ndemos=ndemos, data_address=data_addr)
 
     # Set KMP params (This dt is KMP's dt)
-    kmp.setParams(dt=0.005, lamda=1, kh=6)
+    kmp.setParams(dt=0.05, lamda=1, kh=6)
     # Set desired via points
-    via_pts = [[8, 10, -50, 0],[-1, 6, -25, -40], [8, -4, 30, 10], [-3, 1, -10, 3]]
+    # via_pts = [[350, 1000, -26, 37],[1400, 900, -23, -32]]
+    via_pts = [[0.3,1.1], [1.1,1.2]]
     via_pt_var = 1e-6 * np.eye(kmp.ref_traj[0].sigma.shape[0])
 
     #KMP Prediction
@@ -373,7 +374,7 @@ if __name__ == "__main__":
     plt.plot(ref_path[:, 0], ref_path[:, 1], 'g')
     plt.plot(via_pts[0][0], via_pts[0][1], 'bo')
     plt.plot(via_pts[1][0], via_pts[1][1], 'bo')
-    plt.plot(via_pts[2][0], via_pts[2][1], 'bo')
-    plt.plot(via_pts[3][0], via_pts[3][1], 'bo')
+    # plt.plot(via_pts[2][0], via_pts[2][1], 'bo')
+    # plt.plot(via_pts[3][0], via_pts[3][1], 'bo')
     plt.show()
 
