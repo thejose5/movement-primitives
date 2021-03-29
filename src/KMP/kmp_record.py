@@ -21,13 +21,13 @@ GRIPPER_CLOSED_LINE_COLOR = RED
 GRIPPER_OPEN_LINE_COLOR = BLACK
 LINE_COLOR = BLACK
 REC_TRAJECTORY = []
-SAVE_LOCATION = '/home/thejus/catkin_ws/src/movement_primitives/training_data/KMP_div1000/'
+SAVE_LOCATION = '/home/thejus/catkin_ws/src/movement_primitives/training_data/KMP_div100_dt0.01_dynamic/'
 SAVE_FREQ = 10 #The mouse position will be saved after every SAVE_FREQ iterations of the while loop
 GRIPPER_STATUS = 0 #0 = Open, 1 = Closed
 LEFT_POINT_BOUNDS = [[300,700],[875,1200]] #x1,x2; y1,y2
 RIGHT_POINT_BOUNDS = [[1300,1700],[875,1200]]
 POINTS = []
-DEMO_dT = 0.1
+DEMO_dT = 0.01
 # status_surface = pygame.Surface()
 
 class Button:
@@ -69,7 +69,7 @@ def startRecording(refresh_button, stop_button, game_display):
         # print(pygame.mouse.get_pos())
         pygame.draw.circle(game_display, LINE_COLOR, pygame.mouse.get_pos(), 5)
         if i%SAVE_FREQ == 1:
-            REC_TRAJECTORY.append((time_ind*DEMO_dT,) + tuple(float(x)/1000 for x in pygame.mouse.get_pos()) + tuple([float(x)/(1000*DEMO_dT) for x in pygame.mouse.get_rel()]))
+            REC_TRAJECTORY.append((time_ind*DEMO_dT,) + tuple(float(x)/100 for x in pygame.mouse.get_pos()) + tuple([float(x)/(100*DEMO_dT) for x in pygame.mouse.get_rel()]))
             time_ind += 1
         i+=1
         pygame.display.update()
@@ -101,16 +101,16 @@ def generatePointPos(npoints):
     points = []
 
     # Static
-    static_point_set = [(500,900),(1500,750),(1500,1200),(900,1100)]
-    for i in range(npoints):
-        points.append(static_point_set[i])
+    # static_point_set = [(500,900),(1500,750),(1500,1200),(900,1100)]
+    # for i in range(npoints):
+    #     points.append(static_point_set[i])
 
     # Dynamic
-    # for i in range(npoints):
-    #     if i%2 == 0: #Left side
-    #         points.append((random.randint(LEFT_POINT_BOUNDS[0][0],LEFT_POINT_BOUNDS[0][1]),random.randint(LEFT_POINT_BOUNDS[1][0],LEFT_POINT_BOUNDS[1][1])))
-    #     else: #Right side
-    #         points.append((random.randint(RIGHT_POINT_BOUNDS[0][0],RIGHT_POINT_BOUNDS[0][1]),random.randint(RIGHT_POINT_BOUNDS[1][0],RIGHT_POINT_BOUNDS[1][1])))
+    for i in range(npoints):
+        if i%2 == 0: #Left side
+            points.append((random.randint(LEFT_POINT_BOUNDS[0][0],LEFT_POINT_BOUNDS[0][1]),random.randint(LEFT_POINT_BOUNDS[1][0],LEFT_POINT_BOUNDS[1][1])))
+        else: #Right side
+            points.append((random.randint(RIGHT_POINT_BOUNDS[0][0],RIGHT_POINT_BOUNDS[0][1]),random.randint(RIGHT_POINT_BOUNDS[1][0],RIGHT_POINT_BOUNDS[1][1])))
 
     return points
 
