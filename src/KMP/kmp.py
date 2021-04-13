@@ -3,6 +3,7 @@ import sys
 import os
 import matplotlib.pyplot as plt
 import copy
+import math
 
 np.set_printoptions(threshold=sys.maxsize, linewidth=np.inf)
 
@@ -97,10 +98,10 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
         self.data_out, self.sigma_out, _ = self.GMR(np.array(range(1,self.model_num_datapts+1)) * self.gmm_model.dt)
 
         ####### DEBUGGING ##############
-        plt.scatter(self.data[1,:],self.data[2,:])
-        for i in range(self.gmm_model.num_states):
-            plt.plot(self.gmm_model.mu[1,i],self.gmm_model.mu[2,i], 'ro')
-        plt.show()
+        # plt.scatter(self.data[1,:],self.data[2,:])
+        # for i in range(self.gmm_model.num_states):
+        #     plt.plot(self.gmm_model.mu[1,i],self.gmm_model.mu[2,i], 'ro')
+        # plt.show()
         ##################################
 
         self.ref_traj = []
@@ -108,12 +109,12 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
             self.ref_traj.append(ReferenceTrajectoryPoint(t=(i+1)*self.gmm_model.dt, mu=self.data_out[:,i], sigma=self.sigma_out[i,:,:]))
 
         ####### DEBUGGING ##############
-        ref_path = extractPath(self.ref_traj)
-        print(ref_path)
-        print(len(ref_path), " ", len(ref_path[0]))
-        plt.scatter(ref_path[:, 0], ref_path[:, 1])
-        plt.title('Reference Path')
-        plt.show()
+        # ref_path = extractPath(self.ref_traj)
+        # print(ref_path)
+        # print(len(ref_path), " ", len(ref_path[0]))
+        # plt.scatter(ref_path[:, 0], ref_path[:, 1])
+        # plt.title('Reference Path')
+        # plt.show()
         ##################################
 
         print('KMP Initialized with Reference Trajectory')
@@ -221,18 +222,27 @@ class KMP: #Assumptions: Input is only time; All dofs of output are continuous T
         # Search for closest point in ref trajectory
         self.new_ref_traj = copy.deepcopy(self.ref_traj)
         replace_ind = 0
-        for via_pt in via_pts:
+        num_phases = len(via_pts)
+        phase_size = len(self.ref_traj)/num_phases
+        for via_pt_ind,via_pt in enumerate(via_pts):
             min_dist = float('Inf')
-            for i in range(len(self.ref_traj)):
+            for i in range(math.ceil(via_pt_ind*phase_size), math.floor((via_pt_ind+1)*phase_size)):
                 dist = distBWPts(self.ref_traj[i].mu[0:2],via_pt)
                 # print("dist: ", dist)
                 if dist<min_dist:
                     min_dist = dist
                     # print("min_dist: ", min_dist)
                     replace_ind = i
-            if(len(via_pt)==2):
-                print(self.ref_traj[replace_ind].mu[2:4])
-                via_pt = np.append(np.array(via_pt),self.ref_traj[replace_ind].mu[2:4])
+            if(len(via_pt)==2): #The assumption here is that 1st and last point are always start and end point
+                if via_pt_ind==0 or via_pt_ind==len(via_pts)-1:
+                    via_pt = np.append(np.array(via_pt), self.ref_traj[replace_ind].mu[2:4])
+                else:
+                    d = distBWPts(via_pts[via_pt_ind-1], via_pts[via_pt_ind+1])
+                    vel = [(via_pts[via_pt_ind+1][0]-via_pts[via_pt_ind-1][0])/d,(via_pts[via_pt_ind+1][1]-via_pts[via_pt_ind-1][1])/d]
+                    curr_speed = distBWPts((0,0),self.ref_traj[replace_ind].mu[2:4])
+                    vel = [i*curr_speed for i in vel]
+                    via_pt = np.append(np.array(via_pt),vel)
+
             self.new_ref_traj[replace_ind] = ReferenceTrajectoryPoint(t=self.ref_traj[replace_ind].t, mu=np.array(via_pt), sigma=via_pt_var)
     ###################################
 
@@ -359,7 +369,7 @@ if __name__ == "__main__":
     # Set desired via points
     # via_pts = [[11,15,-50,0],[-5,6,-25,-40],[8,-4,30,10],[2,5,-10,3]]
     # via_pts = [[8, 10, -50, 0], [-1, 6, -25, -40], [8, -4, 30, 10], [-3, 1, -10, 3]]
-    via_pts = [[8.9,3.7],[3,11], [11,12],[10.6,3.7]]
+    via_pts = [[8.9,3.7], [7,9],[7,12], [17,12], [13,8.75],[10.6,3.7]]
     via_pt_var = 1e-6 * np.eye(kmp.ref_traj[0].sigma.shape[0])
 
     #KMP Prediction
@@ -376,11 +386,11 @@ if __name__ == "__main__":
     plt.plot(pred_path[:, 0], pred_path[:, 1], label="KMP Generated Trajectory")
     plt.plot(ref_path[:, 0], ref_path[:, 1], 'g', label="Demonstrated Trajectory")
     for via_pt in via_pts:
-        plt.plot(via_pt[0], via_pt[1], 'bo', label="Via Points")
+        # plt.plot(via_pt[0], via_pt[1], 'bo', label="Via Points")
         plt.plot(via_pt[0], via_pt[1], 'bo')
         # plt.plot(via_pts[2][0], via_pts[2][1], 'bo')
         # plt.plot(via_pts[3][0], via_pts[3][1], 'bo')
-    # plt.legend(loc='lower left')
+    plt.legend(loc='lower left')
     plt.title('KMP generalization over new via points')
     plt.show()
 
